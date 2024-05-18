@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang = "en">
+  <head>
+    <meta charset = "UTF-8" />
+    <meta name = "viewport" content = "width=device-width, initial-scale=1.0" />
+    <title> Multer demo </title>
+    <style>
+      /* A set of css styles that you can change to make the form attractive. Right now basic styling is used.*/
+      .myform {
+        display: block;
+        margin: auto;
+      }
+      .form-field {
+        padding: 10px;
+      }
+      .form-field > input {
+        display: block;
+        margin: auto;
+      }
+      .form-field > label {
+        display: block;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <!-- Create an HTML form with the value of action as URL of API endpoint, encoding as multipart data and request method as POST-->
+      <form
+        action = "http://localhost:3000/upload"
+        enctype = "multipart/form-data"
+        method = "post"
+        class = "myform"
+      >
+        <div class = "form-field">
+          <label>FirstName</label>
+          <input
+            type = "text"
+            id = "firstName"
+            name = "firstName"
+            placeholder = "Enter your firstname"
+          />
+        </div>
+        <div class = "form-field">
+          <label>LastName</label>
+          <input
+            type = "text"
+            id = "lastName"
+            name = "lastName"
+            placeholder = "Enter your lastname"
+          />
+        </div>
+        <div class = "form-field">
+          <label>Upload file here</label>
+          <input type = "file" id = "myFile" name = "myFile" multiple = "true" />
+        </div>
+        <div class = "form-field">
+          <input type = "submit" />
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
