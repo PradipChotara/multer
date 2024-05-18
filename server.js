@@ -2,13 +2,21 @@
 const express = require("express");
 const multer = require("multer");
 const fs = require("fs");
+const cron = require('node-cron');
+const path = require('path');
+
+// Schedule a cron job to run every 10 minutes
+cron.schedule('* * * * *', () => {
+  const directory = './uploads'; // Specify the directory where folders are located
+  const cutoffTime = new Date().getTime() - (5 * 60 * 1000); // 5 minutes ago
+  deleteFoldersOlderThan(directory, cutoffTime);
+});
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const currentDate = getCurrentDateTime();
     const folderPath = `./uploads/${currentDate}`;
     fs.mkdirSync(folderPath, { recursive: true });
-    console.log(file);
     createTxtFile(folderPath, file);
     cb(null, folderPath);
   },
@@ -67,4 +75,34 @@ function getCurrentDateTime() {
 function createTxtFile(folderPath, file) {
   const content = JSON.stringify(file);
   fs.writeFileSync(`${folderPath}/info.txt`, content);
+}
+
+
+function deleteFoldersOlderThan(directory, cutoffTime) {
+  fs.readdir(directory, (err, files) => {
+    if (err) {
+      console.error('Error reading directory:', err);
+      return;
+    }
+
+    files.forEach((file) => {
+      const filePath = path.join(directory, file);
+      fs.stat(filePath, (err, stats) => {
+        if (err) {
+          console.error('Error getting file stats:', err);
+          return;
+        }
+
+        if (stats.isDirectory() && stats.birthtimeMs < cutoffTime) {
+          fs.rmdir(filePath, { recursive: true }, (err) => {
+            if (err) {
+              console.error('Error deleting folder:', err);
+            } else {
+              console.log('Folder deleted:', filePath);
+            }
+          });
+        }
+      });
+    });
+  });
 }
