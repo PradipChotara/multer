@@ -10,7 +10,7 @@ var storage = multer.diskStorage({
     cb(null, file.originalname);
   },
 });
-const upload = multer({ storage: storage })
+const upload = multer({ storage: storage });
 
 const PORT = process.env.PORT || 3000;
 
@@ -23,9 +23,14 @@ app.get("/", (req, res) => {
 });
 
 app.post("/upload", upload.single("myFile"), (req, res) => {
-  console.log("Body: ", req.body);
-  console.log("File: ", req.file);
-  res.send("File successfully uploaded.");
+  try {
+    if (!req.file) {
+      return res.status(400).send("No file uploaded.");
+    }
+    res.send("File successfully uploaded.");
+  } catch (error) {
+    res.status(500).send("An error occurred while uploading the file.");
+  }
 });
 
 app.listen(PORT, () => {
