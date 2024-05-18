@@ -54,6 +54,27 @@ app.post("/upload", upload.single("myFile"), (req, res) => {
   }
 });
 
+// Serve static files from the specified directory
+app.get("/uploads/:folderName", (req, res) => {
+  const folderName = req.params.folderName;
+  const folderPath = path.join(__dirname, "uploads", folderName);
+
+  // Read the contents of the directory
+  fs.readdir(folderPath, (err, files) => {
+    if (err) {
+      console.error("Error reading directory:", err);
+      res.status(500).send("Internal Server Error");
+      return;
+    }
+    files.forEach( (file) => {
+      if(file != "info.txt")
+      {
+        let filepath = folderPath + "/" + file
+        res.sendFile(filepath);
+      }
+    })
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`Server started on port : ${PORT}`);
