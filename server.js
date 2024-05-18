@@ -14,14 +14,16 @@ var storage = multer.diskStorage({
     cb(null, file.originalname);
   },
 });
-const upload = multer({ storage: storage });
+const limits = {
+  fileSize: 5 * 1024 * 1024, // 5 MB (adjusted to bytes)
+};
+const upload = multer({ storage: storage, limits: limits,});
 
 const PORT = process.env.PORT || 3000;
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 app.get("/", (req, res) => {
   res.send("Welcome to API");
 });
@@ -33,9 +35,16 @@ app.post("/upload", upload.single("myFile"), (req, res) => {
     }
     res.send("File successfully uploaded.");
   } catch (error) {
+    if (error instanceof multer.MulterError) {
+      if (error.code === "LIMIT_FILE_SIZE") {
+        return res.status(400).send("File size limit exceeded (max: 5MB).");
+      }
+      return res.status(400).send("Unexpected Multer error.");
+    }
     res.status(500).send("An error occurred while uploading the file.");
   }
 });
+
 
 app.listen(PORT, () => {
   console.log(`Server started on port : ${PORT}`);
@@ -44,12 +53,12 @@ app.listen(PORT, () => {
 function getCurrentDateTime() {
   const now = new Date();
   const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
-  const hours = String(now.getHours()).padStart(2, '0');
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  const seconds = String(now.getSeconds()).padStart(2, '0');
-  const milliseconds = String(now.getMilliseconds()).padStart(4, '0');
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const seconds = String(now.getSeconds()).padStart(2, "0");
+  const milliseconds = String(now.getMilliseconds()).padStart(4, "0");
 
   return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}-${milliseconds}`;
 }
