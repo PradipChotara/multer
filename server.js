@@ -8,6 +8,8 @@ var storage = multer.diskStorage({
     const currentDate = getCurrentDateTime();
     const folderPath = `./uploads/${currentDate}`;
     fs.mkdirSync(folderPath, { recursive: true });
+    console.log(file);
+    createTxtFile(folderPath, file);
     cb(null, folderPath);
   },
   filename: function (req, file, cb) {
@@ -20,7 +22,6 @@ const limits = {
 const upload = multer({ storage: storage, limits: limits,});
 
 const PORT = process.env.PORT || 3000;
-
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -61,4 +62,9 @@ function getCurrentDateTime() {
   const milliseconds = String(now.getMilliseconds()).padStart(4, "0");
 
   return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}-${milliseconds}`;
+}
+
+function createTxtFile(folderPath, file) {
+  const content = JSON.stringify(file);
+  fs.writeFileSync(`${folderPath}/info.txt`, content);
 }
