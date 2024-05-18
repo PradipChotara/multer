@@ -5,6 +5,8 @@ const fs = require("fs");
 const cron = require('node-cron');
 const path = require('path');
 
+let folder = null;
+
 // Schedule a cron job to run every 10 minutes
 cron.schedule('* * * * *', () => {
   const directory = './uploads'; // Specify the directory where folders are located
@@ -18,6 +20,7 @@ var storage = multer.diskStorage({
     const folderPath = `./uploads/${currentDate}`;
     fs.mkdirSync(folderPath, { recursive: true });
     createTxtFile(folderPath, file);
+    folder = folderPath.split("/").pop();
     cb(null, folderPath);
   },
   filename: function (req, file, cb) {
@@ -42,7 +45,8 @@ app.post("/upload", upload.single("myFile"), (req, res) => {
     if (!req.file) {
       return res.status(400).send("No file uploaded.");
     }
-    res.send("File successfully uploaded.");
+    let link = `http://localhost:3000/uploads/${folder}`;
+    res.send(link);
   } catch (error) {
     if (error instanceof multer.MulterError) {
       if (error.code === "LIMIT_FILE_SIZE") {
