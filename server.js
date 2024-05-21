@@ -5,6 +5,8 @@ const fs = require("fs");
 const cron = require('node-cron');
 const path = require('path');
 
+console.log('Server process ID:', process.pid);
+
 let folder = null;
 
 // Schedule a cron job to run every 10 minutes
