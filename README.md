@@ -16,3 +16,9 @@ curl --location 'http://localhost:3000/upload' \
 
 - after uploding file link will be given in reponse
 - from that link file can be accessed
+
+
+## CLI
+```
+./cli.js dashboard
+```
