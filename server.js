@@ -5,8 +5,6 @@ const fs = require("fs");
 const cron = require('node-cron');
 const path = require('path');
 
-console.log('Server process ID:', process.pid);
-
 let folder = null;
 
 // Schedule a cron job to run every 10 minutes
@@ -43,6 +41,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/upload", upload.single("myFile"), (req, res) => {
+  console.log("req handled by ProcessID : ",process.pid);
   try {
     if (!req.file) {
       return res.status(400).send("No file uploaded.");
@@ -83,7 +82,7 @@ app.get("/uploads/:folderName", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server started on port : ${PORT}`);
+  console.log(`Server started on port : ${PORT}, by ProcessID : ${process.pid}`);
 });
 
 function getCurrentDateTime() {
