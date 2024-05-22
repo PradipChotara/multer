@@ -37,7 +37,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
-  res.send("Welcome to API");
+  return res.status(200).send("Welcome to API");
 });
 
 app.post("/upload", upload.single("myFile"), (req, res) => {
@@ -47,7 +47,7 @@ app.post("/upload", upload.single("myFile"), (req, res) => {
       return res.status(400).send("No file uploaded.");
     }
     let link = `http://localhost:3000/uploads/${folder}`;
-    res.send(link);
+    return res.status(200).send(link);
   } catch (error) {
     if (error instanceof multer.MulterError) {
       if (error.code === "LIMIT_FILE_SIZE") {
